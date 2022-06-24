@@ -3,20 +3,25 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
+import useSWR from 'swr'
 
 export default function Home() {
   const [emailValue, setEmailValue] = useState("");
   const router = useRouter();
-
+  const fetcher = (url) => fetch(url).then((res) => res.json())
+  const { data, error } = useSWR(
+    emailValue ? `/api/email/${emailValue}` : null,
+    fetcher
+  )
   const handleSubmit = () => {
     // encrypt the entered email address
-    let encrypted = CryptoJS.AES.encrypt(emailValue, process.env.key);
+    let encryptedEmail = data.email
 
     //Go to the consumer
     router.push({
       pathname: "http://localhost:3001/email",
-      query: { email: encrypted.toString() },
+      query: { email: encryptedEmail },
     });
   };
 
