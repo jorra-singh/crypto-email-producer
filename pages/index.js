@@ -1,21 +1,16 @@
-import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useState } from "react";
-// import CryptoJS from "crypto-js";
-import useSWR from 'swr'
 
 export default function Home() {
   const [emailValue, setEmailValue] = useState("");
   const router = useRouter();
-  const fetcher = (url) => fetch(url).then((res) => res.json())
-  const { data, error } = useSWR(
-    emailValue ? `/api/email/${emailValue}` : null,
-    fetcher
-  )
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // encrypt the entered email address
+
+    const resp = await fetch(`/api/email/${emailValue}`);
+    const data = await resp.json();
+
     let encryptedEmail = data.email
 
     //Go to the consumer
